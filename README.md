@@ -2,7 +2,7 @@
 
 Zee is a shell extension for defining shortcuts for quicker file system navigation.
 
-Similar tools exist that offer a smarter `cd` command by setting up shortcuts based on the directories you most frequently use. However, when dealing with multiple directories that start with the same letter, these shortcuts can inadvertently change their paths, leading to unwanted destination changes. In contrast, Zee takes a simplified approach by only utilizing explicit user-defined shortcuts.
+Similar tools exist that offer a smarter `cd` command by setting up shortcuts based on the directories you most frequently use. However, when dealing with multiple directories that start with the same letter, these shortcuts can change their paths, leading to unwanted destination changes. In contrast, Zee takes a simplified approach by only utilizing explicit user-defined shortcuts.
 
 ## Installation
 
