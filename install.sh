@@ -2,48 +2,43 @@
 
 set -euo pipefail
 
+BIN_DIR="${HOME}/.local/bin"
+# shellcheck disable=SC2088
+BIN_DIR_TILDE="~/.local/bin"
+BIN_FILE="${BIN_DIR}/zee"
+
+RESET=$(tput sgr0)
+# shellcheck disable=SC2034
+readonly RESET
+RED=$(tput setaf 1)
+# shellcheck disable=SC2034
+readonly RED
+
 main() {
-  local bin_dir="${HOME}/.local/bin"
-  local bin_file="${bin_dir}/zee"
+  echo "Installing Zee to '${BIN_DIR}'."
 
-  echo "Installing Zee to '${bin_dir}'."
+  mkdir -p "$BIN_DIR"
+  curl -sSL https://raw.githubusercontent.com/dnsv/zee/main/zee.sh -o "$BIN_FILE"
+  chmod +x "$BIN_FILE"
 
-  mkdir -p "$bin_dir"
-  curl -sSL https://raw.githubusercontent.com/dnsv/zee/main/zee.sh -o "$bin_file"
-  chmod +x "$bin_file"
+  echo "Installed Zee to '${BIN_DIR}'"
 
-  case "$SHELL" in
-  */bash*)
-    # shellcheck disable=SC2016
-    add_to_file 'eval "$(zee init bash)"' "${HOME}/.bashrc"
-    ;;
-  */zsh*)
-    # shellcheck disable=SC2016
-    add_to_file 'eval "$(zee init zsh)"' "${HOME}/.zshrc"
-    ;;
-  */fish*)
-    add_to_file 'zee init fish | source' "${HOME}/.config/fish/config.fish"
-    ;;
-  *)
-    echo "Unknown shell $(basename "$SHELL"). Supported shells are bash, fish & zsh."
-    exit 1
-    ;;
-  esac
-
-  echo "Done. Zee is now available through the command \`z\`."
-  echo "Restart your shell for the changes to take effect."
+  check_path
 }
 
-add_to_file() {
-  local text="$1"
-  local file="$2"
-
-  echo "Adding '${text}' to '${file}'."
-
-  if ! grep -q "$text" "$file"; then
-    echo "$text" >>"$file"
-  else
-    echo "'${text}' is already in '${file}'."
+check_path() {
+  if [[ ":${PATH}:" != *":${BIN_DIR}:"* ]]; then
+    echo
+    echo -e "${RED}Warning: '${BIN_DIR_TILDE}' is not in \$PATH. Zee won't work unless '${BIN_DIR_TILDE}' is added to \$PATH."
+    echo -e "To fix this, add the following line to your shell configuration file:"
+    echo
+    echo -e "  For bash (~/.bashrc) or zsh (~/.zshrc):"
+    echo -e "    export PATH=${BIN_DIR_TILDE}:\$PATH"
+    echo
+    echo -e "  For fish (~/.config/fish/config.fish):"
+    echo -e "    fish_add_path ${BIN_DIR_TILDE}"
+    echo
+    echo -e "After adding, run 'source <your_shell_config_file>' or restart your terminal session.${RESET}"
   fi
 }
 
