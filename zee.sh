@@ -97,7 +97,11 @@ remove() {
 
   validate_shortcut_exists "$shortcut"
 
-  sed -i '' "/^${shortcut};/d" "$SHORTCUTS_PATH"
+  if [[ "$(uname)" == "Darwin" ]]; then
+    sed -i '' "/^${shortcut};/d" "$SHORTCUTS_PATH"
+  else
+    sed -i "/^${shortcut};/d" "$SHORTCUTS_PATH"
+  fi
   echo "Removed shortcut '${shortcut}'."
 }
 
